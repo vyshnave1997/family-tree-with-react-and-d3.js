@@ -1,0 +1,41 @@
+{
+    "name": "Alan",
+    "spouse": "Monica",
+    "imageUrl": "https://www.cloudways.com/wp-content/uploads/2022/10/ricky.png",
+    "spouseImageUrl": "https://teamworkassociatesinc.org/wp-content/uploads/2021/10/Panghoua.png",
+    "children": [
+      {
+        "name": "Mersey Alan",
+        "spouse": "George",
+        "imageUrl": "https://images.squarespace-cdn.com/content/v1/5d3b50b44d055000014b54aa/78e6ceb7-f7a4-4aa0-990d-7f41c06e51d8/Profile_Jantzen.png",
+        "spouseImageUrl": "https://themusclemedics.com/wp-content/uploads/2018/04/Circle-Profile-PNG.png",
+        "children": [
+          {
+            "name": "Aman George",
+            "imageUrl": "https://www.levelequity.com/wp-content/uploads/sean-diljore-simpro-02.png"
+          }
+        ]
+      },
+      {
+        "name": "Adam Alan",
+        "spouse": "Anisa Adam",
+        "imageUrl": "https://mypulse.io/wp-content/themes/understrap-child-1.1.0/img/blog/Chirag_Shah.png",
+        "spouseImageUrl": "https://www.oc-cf.org/wp-content/uploads/2022/05/JOANNA_KONG.png",
+        "children": [
+          {
+            "name": "Francis Adam",
+            "imageUrl": "https://skydeck.berkeley.edu/wp-content/uploads/2024/04/Muaz-modified.png"
+          },
+          {
+            "name": "Nami Adam",
+            "imageUrl": "https://rigits.com/wp-content/uploads/2024/05/marifel_optimized.png"
+          },
+          {
+            "name": "Jeslia Adam",
+            "imageUrl": "https://cdn.fs.teachablecdn.com/H8DRdN7RvSLmqi0uQlFX"
+          }
+        ]
+      }
+    ]
+  }
+  

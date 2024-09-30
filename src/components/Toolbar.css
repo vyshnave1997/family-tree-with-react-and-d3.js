@@ -1,0 +1,110 @@
+* {
+  font-family: "Roboto", sans-serif;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  margin-left: 30px;
+  margin-top: 30px;
+  width: 100%;
+  padding: 10px;
+  height: 10%;
+}
+
+
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Left section */
+.toolbar-left p {
+  font-size: 19px;
+  font-style: bold;
+}
+
+.tool {
+  display: flex;
+  align-items: center;
+  margin-left: 50px;
+}
+
+/* Tool icon */
+.tool-icon {
+  background-color: #ffffff;
+  color: #b7b7b7;
+  border-radius: 50%;
+  margin-right: 5px;
+  width: 30px;
+  font-size: 25px;
+  padding: 8px;
+}
+
+/* Right section */
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  margin-right: 150px;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+}
+
+.tool-icon-right {
+  background-color: #f1f1f1;
+  color: #b7b7b7;
+  border-radius: 50%;
+  margin-right: 10px;
+  width: 20px;
+  font-size: 20px;
+  padding: 8px;
+  margin-left: 5px;
+}
+
+.tool-icon-right:hover {
+  cursor: pointer;
+  color: black;
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+  }
+  
+  .toolbar-left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    margin-right: 150px;
+    margin-left: 0;
+    border-bottom: none;
+    height: auto;
+    align-items: start;
+    margin-left: 1px;
+    text-decoration: none;
+  }
+
+  .toolbar-right {
+    display: flex;
+ 
+  }
+}
+
+/* Tablet view */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .toolbar {
+    flex-direction: column;
+  }
+  
+  .toolbar-left
+   {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    justify-content: center;
+  }
+}

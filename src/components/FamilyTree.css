@@ -1,0 +1,25 @@
+
+.person-rect {
+    stroke: #555;
+    fill: #f9f9f9;
+  }
+  
+  .person-name {
+    font-size: 12px;
+    font-weight: bold;
+    fill: #333;
+  }
+  
+  .status-circle {
+    stroke: #333;
+    stroke-width: 2;
+  }
+  
+  .link {
+    stroke: #ccc;
+  }
+  
+  svg {
+    font-family: "Roboto", sans-serif;
+  }
+  
