@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import familyData from "../newest.json"; // Load your external JSON data
+import familyData from "../new.json";
+import "./FamilyTree.css"; 
 
 const FamilyTree = () => {
   const svgRef = useRef(null);
@@ -12,238 +13,292 @@ const FamilyTree = () => {
     const svgWidth = document.body.clientWidth;
     const svgHeight = 600;
 
-    // Setup the tree layout
-    const treeLayout = d3.tree().size([svgWidth - 100, svgHeight - 100]);
-    const root = d3.hierarchy(familyData);
+    // Clear previous SVG content before re-rendering
+    d3.select(svgRef.current).selectAll("*").remove();
 
-    // Assign positions to the nodes
-    treeLayout(root);
-
+    //  SVG container
     const svg = d3
       .select(svgRef.current)
-      .attr("width", "100%")
-      .attr("height", svgHeight + marginTop)
       .attr("viewBox", `0 0 ${svgWidth} ${svgHeight + marginTop}`)
       .attr("preserveAspectRatio", "xMinYMin meet")
+      .style("width", "100%")
+      .style("height", "auto")
+      .style("display", "block");
+
+    //  zoomable
+    const zoomGroup = svg.append("g");
+
+  
+    const zoom = d3
+      .zoom()
+      .scaleExtent([0.5, 2])
+      .on("zoom", (event) => {
+        zoomGroup.attr("transform", event.transform);
+      });
+
+    svg.call(zoom);
+
+    // Setup the tree layout
+    const treeLayout = d3
+      .tree()
+      .size([svgWidth - 100, svgHeight - 100])
+      .separation((a, b) => (a.parent === b.parent ? 2 : 4));
+
+    const root = d3.hierarchy(processFamilyData(familyData));
+    treeLayout(root);
+
+    const g = zoomGroup
       .append("g")
-      .attr("transform", `translate(0,${marginTop})`);
+      .attr("transform", `translate(60,${marginTop})`);
 
-    // Draw group for each node (person)
-    const nodeGroup = svg
-      .selectAll("g")
+    // nodes 
+    const nodes = g
+      .selectAll(".node")
       .data(root.descendants())
-      .join("g")
-      .attr("transform", (d) => `translate(${d.x},${d.y})`)
-      .attr("class", "person");
+      .enter()
+      .append("g")
+      .attr("class", "node")
+      .attr("transform", (d) => `translate(${d.x},${d.y})`);
 
-    // Person Node: rectangle
-    nodeGroup
+    //  rectangle 
+    nodes
       .append("rect")
+      .attr("x", -personWidth / 2)
+      .attr("y", 0)
       .attr("width", personWidth)
       .attr("height", personHeight)
       .attr("rx", 10)
-      .attr("fill", "#F1F1F1")
-      .attr("stroke", "#ddd")
-      .attr("stroke-width", 1);
+      .attr("ry", 10)
+      .style("fill", "#f1f1f1")
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 1.5);
 
-    // Person image
-    nodeGroup
+    //  text 
+    nodes
+      .append("text")
+      .attr("dy", 5)
+      .attr("dx", 0)
+      .attr("y", 35)
+      .style("text-anchor", "middle")
+      .text((d) => d.data.name)
+      .style("font-size", "15px")
+      .style("font-weight", "normal")
+      .style("letter-spacing", "1px");
+
+    // image 
+    nodes
       .append("image")
-      .attr("xlink:href", (d) => d.data.imageUrl)
-      .attr("x", 50)
-      .attr("y", -30)
-      .attr("width", 50)
-      .attr("height", 50)
+      .attr("xlink:href", (d) => d.data.profile_picture)
+      .attr("x", -30)
+      .attr("y", -40)
+      .attr("width", 60)
+      .attr("height", 60)
       .attr("clip-path", "circle(25px)");
 
-    // Person name
-    nodeGroup
-      .append("text")
-      .attr("x", 80)
-      .attr("y", 50)
-      .attr("text-anchor", "middle")
-      .style("font-size", "19px")
-      .style("font-family", "Arial, sans-serif")
-      .style("fill", "#333")
-      .text((d) => d.data.name);
-
-    // Add clickable menu icon (three vertical dots) in the top-right corner of each person node
-    nodeGroup
-      .append("text")
-      .attr("x", personWidth - 25)
-      .attr("y", 20)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "35px")
-      .attr("cursor", "pointer")
-      .attr("fill", "#857977")
-      .text("⋯") // Three dots for the menu icon
-      .on("click", (event, d) => {
-        alert(`Menu clicked for ${d.data.name}`); // Example action on click
-      })
-      .on("mouseenter", function () {
-        d3.select(this).style("fill", "white"); // Change color to white on hover
-      })
-      .on("mouseleave", function () {
-        d3.select(this).style("fill", "#857977"); // Revert color on mouse leave
-      });
-
-    // Spouse rectangle and image
-    nodeGroup
-      .filter((d) => d.data.spouse)
+    // border
+    nodes
       .append("rect")
-      .attr("x", personWidth + 30)
-      .attr("width", personWidth)
-      .attr("height", personHeight)
-      .attr("rx", 10)
-      .attr("fill", "#F1F1F1")
-      .attr("stroke", "#ddd")
-      .attr("stroke-width", 1);
-
-    nodeGroup
-      .filter((d) => d.data.spouse)
-      .append("image")
-      .attr("xlink:href", (d) => d.data.spouseImageUrl)
-      .attr("x", personWidth + 80)
-      .attr("y", -30)
+      .attr("x", -25)
+      .attr("y", -35)
       .attr("width", 50)
       .attr("height", 50)
-      .attr("clip-path", "circle(25px)");
+      .attr("rx", 25)
+      .attr("ry", 25)
+      .style("fill", "none")
+      .style("stroke", "#ccc")
+      .style("stroke-width", 2);
 
-    nodeGroup
-      .filter((d) => d.data.spouse)
+    // three-dot
+    nodes
       .append("text")
-      .attr("x", personWidth + 110)
-      .attr("y", 50)
-      .attr("text-anchor", "middle")
-      .style("font-size", "19px")
-      .style("font-family", "Arial, sans-serif")
-      .style("fill", "#333")
-      .text((d) => d.data.spouse);
-
-    // Add clickable menu icon (three vertical dots) for spouse node
-    nodeGroup
-      .filter((d) => d.data.spouse)
-      .append("text")
-      .attr("x", personWidth * 2 + 30 - 20)
-      .attr("y", 20)
-      .attr("text-anchor", "middle")
-      .attr("font-size", "35px")
-      .attr("cursor", "pointer")
-      .attr("fill", "#857977")
-      .text("⋯") // Three dots for the menu icon
+      .attr("x", 40) 
+      .attr("y", 7)
+      .attr("dy", ".35em")
+      .style("cursor", "pointer")
+      .style("font-size", "30px") 
+      .style("fill", "black") 
+      .text("⋯") 
       .on("click", (event, d) => {
-        alert(`Menu clicked for ${d.data.spouse}`); // Example action on click
+        alert(`Family Member: ${d.data.name}`);
       })
-      .on("mouseenter", function () {
-        d3.select(this).style("fill", "white"); // Change color to white on hover
+      .on("mouseover", function () {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .style("fill", "white") 
+          .style("font-size", "35px"); 
       })
-      .on("mouseleave", function () {
-        d3.select(this).style("fill", "#857977"); // Revert color on mouse leave
+      .on("mouseout", function () {
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .style("fill", "#8e8f8f") 
+          .style("font-size", "30px"); 
       });
 
-    // Spouse connection path
-    nodeGroup
-      .filter((d) => d.data.spouse)
-      .append("path")
-      .attr("d", (d) => {
-        const personX = 75;
-        const personY = 60;
-        const spouseX = personWidth + 30 + 75;
-        const spouseY = 60;
-        const midX = (personX + spouseX) / 2 + -20;
-        const verticalOffset = 30;
+    // Draw lines connecting parent to children
+    root.descendants().forEach((d) => {
+      if (d.children && d.children.length > 0) {
+        d.children.forEach((child) => {
+          const childX = child.x;
+          const childY = child.y;
 
-        return `
-          M ${personX},${personY} 
-          V ${personY + verticalOffset} 
-          H ${midX} 
-          V ${spouseY + verticalOffset} 
-          H ${spouseX}
-        `;
-      })
-      .attr("stroke", "#dfdede")
-      .attr("fill", "none");
+          g.append("path")
+            .attr(
+              "d",
+              `M${d.x + 100},${d.y + 100} V${d.y + 180} H${childX} V${
+                childY - 35
+              }`
+            )
+            .attr("stroke", "#e3e2e2")
+            .attr("stroke-width", 1.5)
+            .attr("fill", "none");
+        });
+      }
+    });
 
-    // Spouse vertical line connection
-    nodeGroup
-      .filter((d) => d.data.spouse)
-      .append("path")
-      .attr("d", (d) => {
-        const midX = (250 + personWidth + 30 + 80) / 2;
-        const spouseBottomY = 60;
-        const verticalLineLength = 30;
+    
+    root.descendants().forEach((d) => {
+      if (d.data.spouse && d.data.spouse.length > 0) {
+        const spouseGroup = g.append("g");
 
-        return `
-          M ${midX},${spouseBottomY}
-          V ${spouseBottomY + verticalLineLength}
-        `;
-      })
-      .attr("stroke", "#dfdede")
-      .attr("fill", "none");
+        d.data.spouse.forEach((spouse, i) => {
+          const spouseX = d.x + 200 + i * 10;
+          const spouseY = d.y;
 
-    // Vertical line between parent and children
-    svg
-      .selectAll(".link")
-      .data(root.descendants().slice(1))
-      .join("path")
-      .attr("class", "link")
-      .attr("d", (d) => {
-        const parentX = (d.parent.x + d.parent.x + personWidth + 180) / 2;
-        const parentY = d.parent.y + personHeight + 30;
-        const childX = d.x + personWidth / 2;
-        const childY = d.y + -33;
+          //spouse rectangle
+          spouseGroup
+            .append("rect")
+            .attr("x", spouseX - personWidth / 2)
+            .attr("y", spouseY)
+            .attr("width", personWidth)
+            .attr("height", personHeight)
+            .attr("rx", 10)
+            .attr("ry", 10)
+            .style("fill", "#f1f1f1")
+            .attr("stroke", "#ccc")
+            .attr("stroke-width", 1.5);
 
-        return `
-          M ${parentX},${parentY} 
-          V ${parentY + 40} 
-          H ${childX} 
-          V ${childY}
-        `;
-      })
-      .attr("stroke", "#dfdede")
-      .attr("fill", "none");
+          //spouse name
+          spouseGroup
+            .append("text")
+            .attr("x", spouseX)
+            .attr("y", spouseY + 40)
+            .style("text-anchor", "middle")
+            .text(spouse.name)
+            .style("font-size", "15px")
+            .style("font-weight", "normal");
 
-    // Add love emoji (❤️) in black on the top node with padding (5px)
-    const firstNode = nodeGroup.filter((d, i) => i === 0);
+          // spouse image
+          spouseGroup
+            .append("image")
+            .attr("xlink:href", spouse.image)
+            .attr("x", spouseX - 35)
+            .attr("y", spouseY - 40)
+            .attr("width", 60)
+            .attr("height", 60)
+            .attr("clip-path", "circle(25px)");
 
-    firstNode
-      .append("rect")
-      .attr("x", 77) // Adjust based on placement
-      .attr("y", 10)
-      .attr("width", 25)
-      .attr("height", 25)
-      .attr("rx", 15) // Rounded corner to make it circular
-      .attr("fill", "#b08c4e")
-      .attr("stroke", "#ddd");
+        
+          spouseGroup
+            .append("rect")
+            .attr("x", spouseX - 30)
+            .attr("y", spouseY - 35)
+            .attr("width", 50)
+            .attr("height", 50)
+            .attr("rx", 25)
+            .attr("ry", 25)
+            .style("fill", "none")
+            .style("stroke", "#ccc")
+            .style("stroke-width", 2);
 
-    firstNode
-      .append("text")
-      .attr("x", 90) // Centering it inside the rect
-      .attr("y", 30) // Adjusting it slightly above the image
+
+          spouseGroup
+            .append("text")
+            .attr("x", spouseX + 40) 
+            .attr("y", spouseY + 7)
+            .attr("dy", ".35em")
+            .style("cursor", "pointer")
+            .style("font-size", "30px") 
+            .style("fill", "black") 
+            .text("⋯") 
+            .on("click", () => {
+              alert(`Spouse: ${spouse.name}`);
+            })
+            .on("mouseover", function () {
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .style("fill", "white") 
+                .style("font-size", "35px"); 
+            })
+            .on("mouseout", function () {
+              d3.select(this)
+                .transition()
+                .duration(200)
+                .style("fill", "#8a8a8a") 
+                .style("font-size", "30px"); 
+            });
+
+          
+          g.append("path")
+            .attr(
+              "d",
+              `M${d.x},${d.y + personHeight} V${
+                d.y + personHeight + 40
+              } H${spouseX} V${spouseY + personHeight}`
+            )
+            .attr("stroke", "#e3e2e2")
+            .attr("stroke-width", 1.8)
+            .attr("fill", "none");
+        });
+      }
+    });
+
+    //make circle
+    g.append("circle")
+      .attr("cx", root.x + 17)
+      .attr("cy", root.y - -7) 
+      .attr("r", 10) 
+      .style("fill", "#d5b04d")
+      .style("stroke", "#d5b04d")
+      .style("stroke-width", 2);
+
+    // heart symbol
+    g.append("text")
+      .attr("x", root.x + 17)
+      .attr("y", root.y - -11) 
       .attr("text-anchor", "middle")
-      .attr("font-size", "20px")
-      .attr("font-family", "Arial, sans-serif")
-      .attr("font-color", "#000") // Make emoji black
-      .text("🖤");
+      .attr("dominant-baseline", "middle")
+      .style("font-size", "20px")
+      .style("fill", "#212021")
+      .text("❤");
 
-    // Add shadow filter (SVG filter)
-    svg
-      .append("defs")
-      .append("filter")
-      .attr("id", "shadow")
-      .append("feDropShadow")
-      .attr("dx", 3)
-      .attr("dy", 3)
-      .attr("stdDeviation", 2)
-      .attr("flood-opacity", 0.3);
-  }, []);
+    function processFamilyData(data) {
+      const idMap = {};
+      data.forEach((person) => {
+        idMap[person.id] = person;
+      });
 
-  return (
-    <svg
-      ref={svgRef}
-      style={{ width: "100%", height: "100%", position: "relative" }}
-    ></svg>
-  );
+      const rootPerson = idMap[0]; 
+
+      const buildTree = (person) => {
+        if (person.children && person.children.length > 0) {
+          person.children = person.children.map((childId) => {
+            let childData = idMap[childId.id];
+            return childData ? buildTree(childData) : childId;
+          });
+        } else {
+          person.children = [];
+        }
+        return person;
+      };
+
+      return buildTree(rootPerson);
+    }
+  }, [familyData]);
+
+  return <svg ref={svgRef}></svg>;
 };
 
 export default FamilyTree;
