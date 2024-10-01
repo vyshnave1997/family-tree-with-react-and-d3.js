@@ -1,25 +1,45 @@
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
 
-.person-rect {
-    stroke: #555;
-    fill: #f9f9f9;
-  }
-  
-  .person-name {
-    font-size: 12px;
-    font-weight: bold;
-    fill: #333;
-  }
-  
-  .status-circle {
-    stroke: #333;
-    stroke-width: 2;
-  }
-  
-  .link {
-    stroke: #ccc;
-  }
-  
-  svg {
-    font-family: "Roboto", sans-serif;
-  }
-  
+body {
+  background-color: #fefeff;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+svg {
+  display: block;
+  margin: auto;
+}
+
+.node rect {
+  fill: #e1e1e1;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  fill: #000000;
+  font-size: 18px;
+}
+
+.node image {
+  clip-path: circle(25px);
+}
+/* CSS for the three-dot menu */
+.three-dots {
+  cursor: pointer;
+  font-size: 25px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Hover effect for the three-dot menu */
+.three-dots:hover {
+  transform: scale(1.2); /* Increases the size slightly */
+  color: #007bff; /* Changes the color to a blue shade */
+}
