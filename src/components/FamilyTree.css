@@ -1,4 +1,4 @@
-/* Global styles */
+
 * {
   margin: 0;
   padding: 0;
@@ -31,15 +31,15 @@ svg {
 .node image {
   clip-path: circle(25px);
 }
-/* CSS for the three-dot menu */
+
 .three-dots {
   cursor: pointer;
   font-size: 25px;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
-/* Hover effect for the three-dot menu */
+
 .three-dots:hover {
-  transform: scale(1.2); /* Increases the size slightly */
-  color: #007bff; /* Changes the color to a blue shade */
+  transform: scale(1.2); 
+  color: #007bff;
 }
