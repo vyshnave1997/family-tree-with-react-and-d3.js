@@ -272,7 +272,7 @@ const FamilyTree = () => {
       .attr("dominant-baseline", "middle")
       .style("font-size", "20px")
       .style("fill", "#212021")
-      .text("❤");
+      .text("🖤");
 
     function processFamilyData(data) {
       const idMap = {};
