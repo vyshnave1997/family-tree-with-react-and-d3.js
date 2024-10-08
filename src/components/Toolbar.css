@@ -72,7 +72,7 @@
 /* Mobile view */
 @media (max-width: 768px) {
   .toolbar {
-    flex-direction: column;
+    display:none;
   }
   
   .toolbar-left {
